@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package concert;
+
+service ConcertService {
+  rpc GetConcert(GetConcertRequest) returns (GetConcertResponse);
+}
+
+message GetConcertRequest {
+  string concertId = 1;
+}
+
+message GetConcertResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string start_time = 4;
+  string end_time = 5;
+  repeated SeatType seat_types = 6;
+}
+
+message SeatType {
+  string id = 1;
+  string name = 2;
+  float price = 3;
+}

@@ -1,0 +1,33 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps",
+  "projects": {
+    "auth-service": {
+      "type": "application",
+      "root": "apps/auth-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth-service/tsconfig.json"
+      }
+    },
+    "booking-service": {
+      "type": "application",
+      "root": "apps/booking-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/booking-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/booking-service/tsconfig.json"
+      }
+    },
+    "concert-service": {
+      "type": "application",
+      "root": "apps/concert-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/concert-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/concert-service/tsconfig.json"
+      }
+    }
+  }
+}

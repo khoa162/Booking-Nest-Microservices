@@ -1,15 +1,14 @@
-version: '3.8'
+version: '3.9'
 
 services:
   mongo:
     image: mongo:6.0
     container_name: concert_mongo
     ports:
-      - '27017:27017'
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: concert_user
       MONGO_INITDB_ROOT_PASSWORD: concert_pass
-      MONGO_INITDB_DATABASE: concert_db
     volumes:
       - mongo_data:/data/db
 
@@ -23,7 +22,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: concert_rabbitmq
     ports:
       - '5672:5672'
       - '15672:15672'
