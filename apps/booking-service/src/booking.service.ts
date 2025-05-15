@@ -12,7 +12,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Booking, BookingDocument } from './schemas/booking.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { Model, Types } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { createClient, RedisClientType } from 'redis';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -150,10 +150,15 @@ export class BookingService implements OnModuleInit, OnModuleDestroy {
   }
 
   async getUserBookings(userId: string) {
+    if (!isValidObjectId(userId)) {
+      throw new BadRequestException('Invalid user ID');
+    }
+
     try {
       return await this.bookingModel
         .find({ user_id: new Types.ObjectId(userId), status: 'active' })
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
     } catch (error) {
         const err = error as Error;
         this.logger.error('[REDIS ROLLBACK ERROR]', err.stack || err.message);
@@ -162,13 +167,39 @@ export class BookingService implements OnModuleInit, OnModuleDestroy {
   }
 
   async hasUserBookedConcert(userId: string, concertId: string) {
-    const booking = await this.bookingModel.findOne({
-      user_id: new Types.ObjectId(userId),
-      concert_id: new Types.ObjectId(concertId),
-      status: 'active',
-    });
+    const logger = new Logger('BookingService');
 
-    return { hasBooked: !!booking };
+    if (!isValidObjectId(userId) || !isValidObjectId(concertId)) {
+      throw new BadRequestException('Invalid userId or concertId');
+    }
+
+    try {
+      const bookings = await this.bookingModel.find({
+        user_id: new Types.ObjectId(userId),
+        concert_id: new Types.ObjectId(concertId),
+        status: 'active',
+      }).lean() as (Booking & { _id: any })[];
+
+      if (!bookings?.length) {
+        return { hasBooked: false };
+      }
+
+      const bookingDetails = bookings.map((booking) => ({
+        booking_id: booking._id.toString(),
+        seat_id: booking.seat_id?.toString() || null,
+        seat_type_id: booking.seat_type_id?.toString() || null,
+        status: booking.status,
+      }));
+
+      return {
+        hasBooked: true,
+        bookingDetails
+      };
+    } catch (error) {
+      const err = error as Error;
+      logger.error('[hasUserBookedConcert]', err.stack || err.message);
+      throw new InternalServerErrorException('Failed to check booking status');
+    }
   }
 
   async cancelBooking(bookingId: string, userId: string) {
@@ -219,7 +250,7 @@ export class BookingService implements OnModuleInit, OnModuleDestroy {
       const payload = JSON.parse(msg.content.toString());
 
       console.log(
-        chalk.greenBright(`[ EMAIL SIMULATED] Booking ID: ${payload.booking_id}, User: ${payload.user_id}, Concert: ${payload.concert_id}`)
+        chalk.greenBright(`[EMAIL SIMULATED] Booking ID: ${payload.booking_id}, User: ${payload.user_id}, Concert: ${payload.concert_id}`)
       );
 
       this.rabbitmqChannel.ack(msg);

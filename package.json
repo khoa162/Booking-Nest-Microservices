@@ -16,7 +16,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint --ext .ts .",
-    "format": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"**/*.ts\"",
+    "seed": "ts-node concert-service/src/script/seed-mongo.ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.13.3",

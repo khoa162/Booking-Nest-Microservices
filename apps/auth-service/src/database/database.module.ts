@@ -13,7 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
             const uri = config.get<string>('MONGO_URL');
-            console.log('[🔥Auth Mongo URI]', uri);
+            console.log('[Auth Mongo URI]', uri);
 
             return {
                 uri,

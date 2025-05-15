@@ -32,6 +32,6 @@ export class RedisSyncService {
       }
     }
 
-    this.logger.log('✅ Finished syncing seat stock to Redis');
+    this.logger.log('Finished syncing seat stock to Redis');
   }
 }

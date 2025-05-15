@@ -9,10 +9,10 @@ mongoose.connect(uri, {
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('✅ CONNECTED OK');
+  console.log('CONNECTED OK');
   process.exit(0);
 })
 .catch(err => {
-  console.error('❌ CONNECT FAILED', err);
+  console.error('CONNECT FAILED', err);
   process.exit(1);
 });

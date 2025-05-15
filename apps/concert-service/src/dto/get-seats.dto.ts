@@ -4,7 +4,15 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class GetSeatsQueryDto {
   @ApiProperty()
-  @Transform(({ value }) => value.split(','))
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',');
+    }
+    if (Array.isArray(value)) {
+      return value;
+    }
+    return [];
+  })
   @IsMongoId({ each: true })
   @IsArray()
   @ArrayNotEmpty()

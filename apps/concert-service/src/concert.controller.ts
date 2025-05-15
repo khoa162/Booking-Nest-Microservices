@@ -12,7 +12,9 @@ import { ConcertService } from './concert.service';
 import { GetConcertParamDto } from './dto/get-concert.dto';
 import { GetSeatsQueryDto } from './dto/get-seats.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller('concerts')
 export class ConcertController {
@@ -32,7 +34,8 @@ export class ConcertController {
     } catch (error) {
       const err = error as Error;
       this.logger.error(`[GET /concerts/${concertId}]`, err.stack || err.message);
-      throw new InternalServerErrorException('Failed to fetch concert');
+      throw error;
+      // throw new InternalServerErrorException('Failed to fetch concert');
     }
   }
 
@@ -53,7 +56,8 @@ export class ConcertController {
     } catch (error) {
       const err = error as Error;
       this.logger.error(`[GET /concerts/${concertId}/seats]`, err.stack || err.message);
-      throw new InternalServerErrorException('Failed to fetch seats');
+      throw error;
+      // throw new InternalServerErrorException('Failed to fetch seats');
     }
   }
 }

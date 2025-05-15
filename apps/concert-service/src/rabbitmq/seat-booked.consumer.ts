@@ -44,7 +44,7 @@ export class SeatBookedConsumer implements OnModuleInit {
                 { $set: { is_booked: true } }
             );
 
-            this.logger.log(`✅ Seat ${seat_id} marked as booked`);
+            this.logger.log(`Seat ${seat_id} marked as booked`);
             this.channel.ack(msg);
         } catch (err) {
             const error = err as Error;

@@ -41,7 +41,8 @@ export class BookingController {
       return await this.bookingService.getUserBookings(userId);
     } catch (err) {
       this.logger.error('[GET /bookings]', err);
-      throw new InternalServerErrorException('Failed to fetch bookings');
+      throw err;
+      // throw new InternalServerErrorException('Failed to fetch bookings');
     }
   }
 
@@ -55,7 +56,8 @@ export class BookingController {
       return await this.bookingService.hasUserBookedConcert(userId, concertId);
     } catch (err) {
       this.logger.error(`[GET /bookings/${concertId}/status]`, err);
-      throw new InternalServerErrorException('Failed to check booking status');
+      throw err;
+      // throw new InternalServerErrorException('Failed to check booking status');
     }
   }
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Concert, ConcertDocument } from './schemas/concert.schema';
 import { Seat, SeatDocument } from './schemas/seat.schema';
@@ -15,7 +15,13 @@ export class ConcertService {
 
   async getConcertById(concertId: string) {
     try {
-      return await this.concertModel.findById(concertId);
+      const concert = await this.concertModel.findById(concertId);
+
+      if (!concert) {
+        throw new NotFoundException(`Concert with ID ${concertId} not found`);
+      }
+
+      return concert;
     } catch (error) {
       const err = error as Error;
       this.logger.error(`[getConcertById]`, err.stack || err.message);
@@ -24,18 +30,24 @@ export class ConcertService {
   }
 
   async getSeatsByConcertAndType(concertId: string, seatTypeIds: string[]) {
-    try {
-      const concertObj = new Types.ObjectId(concertId);
-      const typeObjs = seatTypeIds.map((id) => new Types.ObjectId(id));
+     try {
+        const concertObj = new Types.ObjectId(concertId);
+        const typeObjs = seatTypeIds.map((id) => new Types.ObjectId(id));
 
-      return await this.seatModel.find({
-        concert_id: concertObj,
-        seat_type_id: { $in: typeObjs },
-      });
-    } catch (error) {
-      const err = error as Error;
-      this.logger.error(`[getSeatsByConcertAndType]`, err.stack || err.message);
-      throw err;
-    }
+        const seats = await this.seatModel.find({
+          concert_id: concertObj,
+          seat_type_id: { $in: typeObjs },
+        });
+
+        if (!seats.length) {
+          throw new NotFoundException('No seats found for given concert and seat types');
+        }
+
+        return seats;
+      } catch (error) {
+        const err = error as Error;
+        this.logger.error(`[getSeatsByConcertAndType]`, err.stack || err.message);
+        throw err;
+      }
   }
 }

@@ -6,6 +6,7 @@ import { RedisSyncService } from './redis/redis.sync.service';
 import { SeatBookedConsumer } from './rabbitmq/seat-booked.consumer';
 import * as amqp from 'amqplib';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,6 +30,14 @@ async function bootstrap() {
 
   const seatBookedConsumer = app.get(SeatBookedConsumer);
   seatBookedConsumer.setChannel(channel);
+
+  app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,              
+        forbidNonWhitelisted: true,  
+        transform: true,             
+      }),
+    );
 
   const config = new DocumentBuilder()
     .setTitle('Booking Service API')

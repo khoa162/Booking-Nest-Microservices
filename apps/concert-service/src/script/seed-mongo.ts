@@ -52,7 +52,7 @@ function generateSeats(concertId: mongoose.Types.ObjectId) {
 
 async function seed() {
   await mongoose.connect(MONGO_URL);
-  console.log('✅ Connected to MongoDB');
+  console.log('Connected to MongoDB');
 
   const db = mongoose.connection.db;
 
@@ -71,7 +71,7 @@ async function seed() {
 
   await Seat.insertMany(seats);
 
-  console.log('✅ Seeded concerts, seat types, and seats');
+  console.log('Seeded concerts, seat types, and seats');
   await mongoose.disconnect();
 }
 

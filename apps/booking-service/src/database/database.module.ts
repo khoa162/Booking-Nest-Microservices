@@ -14,7 +14,7 @@ import { Booking, BookingSchema } from '../schemas/booking.schema';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         const uri = config.get<string>('MONGO_URL');
-        console.log('[🔥 Booking Mongo URI]', uri);
+        console.log('[Booking Mongo URI]', uri);
 
         return {
           uri,
